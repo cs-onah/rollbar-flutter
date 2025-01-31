@@ -127,6 +127,5 @@ class Config implements Serializable {
         'handleUncaughtErrors': handleUncaughtErrors,
         'includePlatformLogs': includePlatformLogs,
         'ignoredErrorMessages' : ignoredErrorMessages,
-        'ignoredExceptions' : ignoredExceptions,
       };
 }

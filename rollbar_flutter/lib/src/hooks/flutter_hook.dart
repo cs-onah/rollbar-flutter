@@ -10,9 +10,22 @@ import 'hook.dart';
 @sealed
 class FlutterHook implements Hook {
   FlutterExceptionHandler? _originalOnError;
+  Config? config;
+
+  bool isIgnored(FlutterErrorDetails error) {
+    if (config != null) {
+      if (config!.ignoredExceptions.contains(error.exception.runtimeType)) {
+        return true;
+      }
+      if (config!.ignoredErrorMessages.contains(error.exception.toString())) {
+        return true;
+      }
+    }
+    return false;
+  }
 
   void onError(FlutterErrorDetails error) {
-    if (!error.silent) {
+    if (!error.silent && !isIgnored(error)) {
       Rollbar.drop(
         Breadcrumb.error(
           error.exceptionAsString(),
@@ -35,7 +48,8 @@ class FlutterHook implements Hook {
   }
 
   @override
-  void install(_) {
+  void install(config) {
+    this.config = config;
     _originalOnError = FlutterError.onError;
     FlutterError.onError = onError;
   }

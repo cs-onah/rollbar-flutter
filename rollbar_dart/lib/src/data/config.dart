@@ -37,6 +37,8 @@ class Config implements Serializable {
   final Transformer Function(Config) transformer;
   final Sender Function(Config) sender;
   final http.Client Function() httpClient;
+  final List<Type> ignoredExceptions;
+  final List<String> ignoredErrorMessages;
 
   const Config({
     required this.accessToken,
@@ -55,6 +57,8 @@ class Config implements Serializable {
     this.transformer = NoopTransformer.new,
     this.sender = PersistentHttpSender.new,
     this.httpClient = http.Client.new,
+    this.ignoredErrorMessages = const [],
+    this.ignoredExceptions = const [],
   });
 
   Config copyWith({
@@ -73,6 +77,8 @@ class Config implements Serializable {
     Marshaller Function(Config)? marshaller,
     Transformer Function(Config)? transformer,
     Sender Function(Config)? sender,
+     List<Type>? ignoredExceptions,
+     List<String>? ignoredErrorMessages,
   }) =>
       Config(
           accessToken: accessToken ?? this.accessToken,
@@ -90,7 +96,10 @@ class Config implements Serializable {
           notifier: notifier ?? this.notifier,
           marshaller: marshaller ?? this.marshaller,
           transformer: transformer ?? this.transformer,
-          sender: sender ?? this.sender);
+          sender: sender ?? this.sender,
+          ignoredExceptions: ignoredExceptions ?? this.ignoredExceptions,
+          ignoredErrorMessages: ignoredErrorMessages ?? this.ignoredErrorMessages,
+      );
 
   @override
   factory Config.fromMap(JsonMap map) => Config(
@@ -117,5 +126,7 @@ class Config implements Serializable {
         'persistenceLifetime': persistenceLifetime.inSeconds,
         'handleUncaughtErrors': handleUncaughtErrors,
         'includePlatformLogs': includePlatformLogs,
+        'ignoredErrorMessages' : ignoredErrorMessages,
+        'ignoredExceptions' : ignoredExceptions,
       };
 }
